@@ -7,6 +7,7 @@
 # Problem Dampener: one bad level is allowed
 
 from pathlib import Path
+import timeit
 
 # get correct subfolder path
 scriptPath = Path(__file__).resolve()
@@ -17,61 +18,68 @@ f = open(inputPath)
 def isReportSafe(report):
     reportCount = len(report)
     mode = 0
-    
+
     for i, level in enumerate(report):
         if i == 0:
             continue
-        
+
         # check previous level
         current = int(level)
         before = int(report[i-1])
-        
+
         # unsafe if identical
         if before == current:
             return False
-        
+
         # get mode
         diff = current - before
         if mode == 0:
             mode = diff/abs(diff)
-            
+
         # unsafe if not increasing / descreasing the same way and more than 3
         if abs(diff) > 3:
             return False
 
         if mode != diff/abs(diff):
             return False
-        
+
         # not at the end of the report
         if i != (reportCount - 1):
             continue
-        
+
         # must be safe
         return True
-    
+
+
 # calculate answer
-answer = 0
-reports = []
+def getAnswer():
+    answer = 0
+    reports = []
 
-for line in f:
-    report = line.split()
-    reports.append(report)
-    
-for report in reports:
-    if isReportSafe(report):
-        answer += 1
-        continue
+    for line in f:
+        report = line.split()
+        reports.append(report)
 
-    for i, level in enumerate(report):
-        newReport = report.copy()
-        newReport.pop(i)
-        
-        if not isReportSafe(newReport):
+    for report in reports:
+        if isReportSafe(report):
+            answer += 1
             continue
-        
-        # it was safe, so add to answer and continue
-        answer += 1
-        break  
 
-# output the answer
-print(answer)
+        for i, level in enumerate(report):
+            newReport = report.copy()
+            newReport.pop(i)
+
+            if not isReportSafe(newReport):
+                continue
+
+            # it was safe, so add to answer and continue
+            answer += 1
+            break
+
+    # output the answer
+    print(answer)
+
+
+execution_time = timeit.timeit(getAnswer, number=1)
+execution_time_ms = execution_time * 1000
+print(f"Execution time: {execution_time_ms:.3f} ms")

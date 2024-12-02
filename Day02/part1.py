@@ -6,6 +6,7 @@
 # - Any two adjacent levels differ by at least one and at most three.
 
 from pathlib import Path
+import timeit
 
 # get correct subfolder path
 scriptPath = Path(__file__).resolve()
@@ -13,44 +14,51 @@ scriptDir = scriptPath.parent
 inputPath = scriptDir / "input.txt"
 f = open(inputPath)
 
+
 # calculate answer
-answer = 0
+def getAnswer():
+    answer = 0
 
-for line in f:
-    levels = line.split()
-    reportCount = len(levels)
-    mode = 0
-    
-    for i, level in enumerate(levels):
-        if i == 0:
-            continue
-        
-        # check previous level
-        current = int(level)
-        before = int(levels[i-1])
-        
-        # unsafe if identical
-        if before == current:
-            break
-        
-        # get mode
-        diff = current - before
-        if mode == 0:
-            mode = diff/abs(diff)
-            
-        # unsafe if not increasing / descreasing the same way and less than 4
-        if abs(diff) > 3:
-            break
+    for line in f:
+        levels = line.split()
+        reportCount = len(levels)
+        mode = 0
 
-        if mode != diff/abs(diff):
-            break
-        
-        # not at the end of the report
-        if i != (reportCount - 1):
-            continue
+        for i, level in enumerate(levels):
+            if i == 0:
+                continue
 
-        # must be safe, add to answer
-        answer += 1
+            # check previous level
+            current = int(level)
+            before = int(levels[i - 1])
 
-# output the answer
-print(answer)
+            # unsafe if identical
+            if before == current:
+                break
+
+            # get mode
+            diff = current - before
+            if mode == 0:
+                mode = diff / abs(diff)
+
+            # unsafe if not increasing / descreasing the same way and less than 4
+            if abs(diff) > 3:
+                break
+
+            if mode != diff / abs(diff):
+                break
+
+            # not at the end of the report
+            if i != (reportCount - 1):
+                continue
+
+            # must be safe, add to answer
+            answer += 1
+
+    # output the answer
+    print(answer)
+
+
+execution_time = timeit.timeit(getAnswer, number=1)
+execution_time_ms = execution_time * 1000
+print(f"Execution time: {execution_time_ms:.3f} ms")
