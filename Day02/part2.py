@@ -23,24 +23,19 @@ def isReportSafe(report):
         if i == 0:
             continue
 
-        # check previous level
         current = int(level)
         before = int(report[i-1])
-
-        # unsafe if identical
-        if before == current:
-            return False
-
-        # get mode
         diff = current - before
-        if mode == 0:
-            mode = diff/abs(diff)
+        absDiff = abs(diff)
 
         # unsafe if not increasing / descreasing the same way and more than 3
-        if abs(diff) > 3:
+        if absDiff > 3 or absDiff == 0:
             return False
 
-        if mode != diff/abs(diff):
+        if mode == 0:
+            mode = diff / absDiff
+
+        if mode != diff / absDiff:
             return False
 
         # not at the end of the report
@@ -77,9 +72,10 @@ def getAnswer():
             break
 
     # output the answer
-    print(answer)
+    print(f"Answer: {answer}")
 
 
+print(f"{scriptPath.parent.name} - {scriptPath.name}")
 execution_time = timeit.timeit(getAnswer, number=1)
 execution_time_ms = execution_time * 1000
-print(f"Execution time: {execution_time_ms:.3f} ms")
+print(f"Timing: {execution_time_ms:.3f} ms")

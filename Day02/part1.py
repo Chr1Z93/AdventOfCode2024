@@ -56,9 +56,10 @@ def getAnswer():
             answer += 1
 
     # output the answer
-    print(answer)
+    print(f"Answer: {answer}")
 
 
+print(f"{scriptPath.parent.name} - {scriptPath.name}")
 execution_time = timeit.timeit(getAnswer, number=1)
 execution_time_ms = execution_time * 1000
-print(f"Execution time: {execution_time_ms:.3f} ms")
+print(f"Timing: {execution_time_ms:.3f} ms")
