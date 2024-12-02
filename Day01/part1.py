@@ -20,7 +20,6 @@ list2 = []
 # parse input
 for line in f:
     numberList = line.split()
-    
     list1.append(numberList[0])
     list2.append(numberList[1])
 
@@ -30,7 +29,6 @@ list2.sort()
 
 # get differences
 for i in range(len(list1)):
-    # add to answer
     answer += abs(int(list1[i])-int(list2[i]))
 
 # output the answer
