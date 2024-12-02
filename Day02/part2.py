@@ -7,7 +7,7 @@
 # Problem Dampener: one bad level is allowed
 
 from pathlib import Path
-import timeit
+import time
 
 # get correct subfolder path
 scriptPath = Path(__file__).resolve()
@@ -23,9 +23,7 @@ def isReportSafe(report):
         if i == 0:
             continue
 
-        current = int(level)
-        before = int(report[i-1])
-        diff = current - before
+        diff = level - report[i - 1]
         absDiff = abs(diff)
 
         # unsafe if not increasing / descreasing the same way and more than 3
@@ -42,40 +40,43 @@ def isReportSafe(report):
         if i != (reportCount - 1):
             continue
 
-        # must be safe
+        # must be safe, if the code got to this point
         return True
 
 
-# calculate answer
 def getAnswer():
     answer = 0
-    reports = []
 
     for line in f:
-        report = line.split()
-        reports.append(report)
+        splits = line.split()
+        report = []
 
-    for report in reports:
+        # store report with levels as numbers
+        for split in splits:
+            report.append(int(split))
+
+        # check safety
         if isReportSafe(report):
             answer += 1
             continue
 
+        # check variations with one level removed
         for i, level in enumerate(report):
             newReport = report.copy()
             newReport.pop(i)
 
-            if not isReportSafe(newReport):
-                continue
+            if isReportSafe(newReport):
+                answer += 1
+                break
 
-            # it was safe, so add to answer and continue
-            answer += 1
-            break
+    return answer
 
-    # output the answer
-    print(f"Answer: {answer}")
+# start timer and run main code
+start_time = time.perf_counter()
+answer = getAnswer()
+execution_time_ms = (time.perf_counter() - start_time) * 1000
 
-
+# output results
 print(f"{scriptPath.parent.name} - {scriptPath.name}")
-execution_time = timeit.timeit(getAnswer, number=1)
-execution_time_ms = execution_time * 1000
+print(f"Answer: {answer}")
 print(f"Timing: {execution_time_ms:.3f} ms")
