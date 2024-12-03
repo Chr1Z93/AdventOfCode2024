@@ -9,19 +9,19 @@ from pathlib import Path
 import timeit
 
 # get correct subfolder path
-scriptPath = Path(__file__).resolve()
-scriptDir = scriptPath.parent
-inputPath = scriptDir / "input.txt"
-f = open(inputPath)
+script_path = Path(__file__).resolve()
+script_dir = script_path.parent
+input_path = script_dir / "input.txt"
+f = open(input_path)
 
 
 # calculate answer
-def getAnswer():
+def get_answer():
     answer = 0
 
     for line in f:
         levels = line.split()
-        reportCount = len(levels)
+        report_count = len(levels)
         mode = 0
 
         for i, level in enumerate(levels):
@@ -49,7 +49,7 @@ def getAnswer():
                 break
 
             # not at the end of the report
-            if i != (reportCount - 1):
+            if i != (report_count - 1):
                 continue
 
             # must be safe, add to answer
@@ -59,7 +59,7 @@ def getAnswer():
     print(f"Answer: {answer}")
 
 
-print(f"{scriptPath.parent.name} - {scriptPath.name}")
-execution_time = timeit.timeit(getAnswer, number=1)
+print(f"{script_path.parent.name} - {script_path.name}")
+execution_time = timeit.timeit(get_answer, number=1)
 execution_time_ms = execution_time * 1000
 print(f"Timing: {execution_time_ms:.3f} ms")
