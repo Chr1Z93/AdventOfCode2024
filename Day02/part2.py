@@ -78,5 +78,5 @@ execution_time_ms = (time.perf_counter() - start_time) * 1000
 
 # output results
 print(f"{scriptPath.parent.name} - {scriptPath.name}")
-print(f"Answer: {answer}")
 print(f"Timing: {execution_time_ms:.3f} ms")
+print(f"Answer: {answer}")
