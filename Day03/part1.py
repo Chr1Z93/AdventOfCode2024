@@ -19,8 +19,8 @@ def get_answer():
 
     for line in input_file:
 
-        for statement in re.findall("mul\(\d+\,\d+\)", line):
-            numbers = re.findall("\d+", statement)
+        for statement in re.findall(r"mul\(\d+\,\d+\)", line):
+            numbers = re.findall(r"\d+", statement)
             answer += int(numbers[0]) * int(numbers[1])
 
     return answer

@@ -21,7 +21,7 @@ def get_answer():
 
     for line in input_file:
 
-        for statement in re.findall("mul\(\d+\,\d+\)|do\(\)|don't\(\)", line):
+        for statement in re.findall(r"mul\(\d+\,\d+\)|do\(\)|don't\(\)", line):
             if statement == "do()":
                 enabled = True
 
@@ -29,7 +29,7 @@ def get_answer():
                 enabled = False
 
             elif enabled:
-                numbers = re.findall("\d+", statement)
+                numbers = re.findall(r"\d+", statement)
                 answer += int(numbers[0]) * int(numbers[1])
 
     return answer
