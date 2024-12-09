@@ -20,34 +20,28 @@ def get_answer():
     answer = 0
 
     expanded_map = []
+    dot_ids = []
     is_file = True
     for line in input_file:
         string = line.strip()
-        id = 0
+        file_id = 0
+        map_id = 0
         for char in string:
             num = int(char)
-
             for i in range(num):
                 if is_file:
-                    expanded_map.append(id)
+                    expanded_map.append(file_id)
                 else:
                     expanded_map.append(".")
+                    dot_ids.append(map_id)
+                map_id += 1
             if is_file:
-                id += 1
+                file_id += 1
             is_file = not is_file
-
-    number_map = []
-    dot_ids = []
-    for id, e in enumerate(expanded_map):
-        if e == ".":
-            number_map.append(".")
-            dot_ids.append(id)
-        else:
-            number_map.append(e)
 
     replace_id = 0
     max_replace = len(dot_ids)
-    reordered_map = number_map.copy()
+    reordered_map = expanded_map.copy()
     for i, e in reversed(list(enumerate(reordered_map))):
         if e == ".":
             continue
