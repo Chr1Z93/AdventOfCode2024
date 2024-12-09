@@ -16,9 +16,15 @@ input_path = script_dir / "example.txt"
 input_file = open(input_path)
 
 
-def get_answer():
-    answer = 0
+def calculate_checksum(number_map):
+    result = 0
+    for i, e in enumerate(number_map):
+        if e != ".":
+            result += i * e
+    return result
 
+
+def get_answer():
     expanded_map = []
     dot_ids = []
     empty_space_size = {}
@@ -44,35 +50,53 @@ def get_answer():
                 file_id += 1
             is_file = not is_file
 
-    replace_id = 0
     max_replace = len(dot_ids)
     reordered_map = expanded_map.copy()
+
+    # loop through files
     for i, e in reversed(list(enumerate(reordered_map))):
         if e == ".":
             continue
 
-        dot_id = dot_ids[replace_id]
-        if empty_space_size[dot_id] < file_size[e]:
-            continue
+        # loop through empty spaces
+        for replace_id, dot_id in enumerate(dot_ids):
+            # only move files if they can fit entirely in the empty space
+            if empty_space_size[dot_id] < file_size[e]:
+                continue
 
-        if dot_id >= i:
+            # don't move files to the right
+            if dot_id >= i:
+                break
+
+            # move the file block
+            reordered_map[dot_id] = e
+            reordered_map[i] = "."
+
+            # maybe update empty_space_size (if this is the last block of the file)
+            if expanded_map[i - 1] != e:
+                for j in range(1, file_size[e]):
+                    if replace_id + j >= max_replace:
+                        break
+
+                    next_dot_id = dot_ids[replace_id + j]
+
+                    # if this space is not directly adjacent, stop updating
+                    if next_dot_id != dot_id + j:
+                        break
+
+                    empty_space_size[next_dot_id] -= file_size[e]
+
+                    # remove from index if no space
+                    if empty_space_size[next_dot_id] == 0:
+                        dot_ids.pop(replace_id + j)
+
+            # file block was written, so this block is now full
+            dot_ids.pop(replace_id)
+            empty_space_size[dot_id] = 0
             break
 
-        reordered_map[dot_id] = e
-        reordered_map[i] = "."
-        replace_id += 1
-        if replace_id >= max_replace:
-            break
-
-    for i, e in enumerate(reordered_map):
-        if e != ".":
-            answer += i * e
-
-    print(empty_space_size)
-    print(file_size)
-    print(expanded_map)
     print(reordered_map)
-    return answer
+    return calculate_checksum(reordered_map)
 
 
 # start timer and run main code
