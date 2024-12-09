@@ -12,7 +12,7 @@ import time
 # get correct subfolder path
 script_path = Path(__file__).resolve()
 script_dir = script_path.parent
-input_path = script_dir / "example.txt"
+input_path = script_dir / "input.txt"
 input_file = open(input_path)
 
 
@@ -50,11 +50,10 @@ def get_answer():
                 file_id += 1
             is_file = not is_file
 
-    max_replace = len(dot_ids)
     reordered_map = expanded_map.copy()
 
     # loop through files
-    for i, e in reversed(list(enumerate(reordered_map))):
+    for i, e in reversed(list(enumerate(expanded_map))):
         if e == ".":
             continue
 
@@ -72,10 +71,10 @@ def get_answer():
             reordered_map[dot_id] = e
             reordered_map[i] = "."
 
-            # maybe update empty_space_size (if this is the last block of the file)
+            # maybe update adjacent empty_space_size (if this is the last block of the file)
             if expanded_map[i - 1] != e:
-                for j in range(1, file_size[e]):
-                    if replace_id + j >= max_replace:
+                for j in range(1, len(dot_ids)):
+                    if replace_id + j >= len(dot_ids):
                         break
 
                     next_dot_id = dot_ids[replace_id + j]
@@ -92,10 +91,8 @@ def get_answer():
 
             # file block was written, so this block is now full
             dot_ids.pop(replace_id)
-            empty_space_size[dot_id] = 0
             break
 
-    print(reordered_map)
     return calculate_checksum(reordered_map)
 
 
