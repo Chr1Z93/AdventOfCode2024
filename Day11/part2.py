@@ -11,7 +11,7 @@
 from pathlib import Path
 import time
 import re
-import math
+from functools import cache
 
 # get correct subfolder path
 script_path = Path(__file__).resolve()
@@ -20,46 +20,49 @@ input_path = script_dir / "input.txt"
 input_file = open(input_path)
 
 
-def get_stones_after_blinking(stones, blinks):
-    stone_cache = {0: [1]}
+@cache
+def get_new_stones(stone):
+    if stone == 0:
+        return [1]
 
-    previous_blink = stones
-    for i in range(blinks):
-        current_blink = []
+    num_digits = len(str(abs(stone)))
+    if num_digits % 2 == 0:
+        half_digits = num_digits // 2
+        divisor = 10**half_digits
+        left_half = stone // divisor
+        right_half = stone % divisor
 
-        for stone in previous_blink:
-            if stone in stone_cache:
-                for new_stone in stone_cache[stone]:
-                    current_blink.append(new_stone)
-                continue
+        return [left_half, right_half]
 
-            num_digits = math.floor(math.log10(abs(stone))) + 1
-            if num_digits % 2 == 0:
-                half_digits = num_digits // 2
-                divisor = 10**half_digits
-                left_half = stone // divisor
-                right_half = stone % divisor
+    return [stone * 2024]
 
-                current_blink.append(left_half)
-                current_blink.append(right_half)
-                stone_cache[stone] = [left_half, right_half]
-                continue
 
-            current_blink.append(stone * 2024)
+@cache
+def get_stones_after_blinking(stone, blinks):
+    if blinks == 0:
+        return [stone]
 
-        previous_blink = current_blink
-
+    previous_blink = get_stones_after_blinking(stone, blinks - 1)
+    current_blink = [
+        new_stone
+        for previous_stone in previous_blink
+        for new_stone in get_new_stones(previous_stone)
+    ]
     return current_blink
 
 
 def get_answer():
+    answer = 0
     stones = []
     for line in input_file:
         for m in re.finditer("\\d+", line):
             stones.append(int(m.group()))
 
-    stones_blinked = get_stones_after_blinking(stones, 45)
-    return len(stones_blinked)
+    for stone in stones:
+        stones_blinked = get_stones_after_blinking(stone, 45)
+        answer += len(stones_blinked)
+
+    return answer
 
 
 # start timer and run main code
